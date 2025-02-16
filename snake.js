@@ -1,17 +1,34 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
+const scoreElement = document.getElementById("score");
+const restartButton = document.getElementById("restartButton");
 
-const gridSize = 20; // 20x20 pól
-const tileSize = canvas.width / gridSize; // Rozmiar jednego pola
+const gridSize = 40;
+const tileSize = canvas.width / gridSize;
 
-let snake = [{ x: 10, y: 10 }]; // Początkowa pozycja węża
-let direction = { x: 0, y: 0 }; // Kierunek ruchu
-let food = getRandomPosition(); // Pozycja jedzenia
-let blueFood = null; // Niebieskie jedzenie
-let score = 0; // Wynik
-let gameOver = false; // Czy gra się zakończyła
-let redWall = null; // Czerwona ściana
-let redWallTimeout = null; // Timer dla czerwonej ściany
+let snake = [{ x: 10, y: 10 }];
+let direction = { x: 0, y: 0 };
+let food = getRandomPosition();
+let blueFood = null;
+let score = 0;
+let gameOver = false;
+let redWall = null;
+let redWallTimeout = null;
+
+// Funkcja do resetowania gry
+function resetGame() {
+    snake = [{ x: 10, y: 10 }];
+    direction = { x: 0, y: 0 };
+    food = getRandomPosition();
+    blueFood = null;
+    score = 0;
+    gameOver = false;
+    redWall = null;
+    if (redWallTimeout) clearTimeout(redWallTimeout);
+    restartButton.style.display = "none"; // Ukryj przycisk po restarcie
+    scoreElement.textContent = `Wynik: ${score}`;
+    gameLoop(); // Uruchom grę ponownie
+}
 
 // Funkcja do losowania pozycji
 function getRandomPosition() {
@@ -23,7 +40,7 @@ function getRandomPosition() {
 
 // Funkcja do rysowania węża
 function drawSnake() {
-    ctx.fillStyle = "lime";
+    ctx.fillStyle = "yellow";
     snake.forEach(segment => {
         ctx.fillRect(segment.x * tileSize, segment.y * tileSize, tileSize, tileSize);
     });
@@ -62,7 +79,6 @@ function update() {
 
     const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-    // Kolizja z czerwoną ścianą
     if (redWall) {
         if (
             (redWall.side === "top" && head.y < 0) ||
@@ -71,12 +87,11 @@ function update() {
             (redWall.side === "right" && head.x >= gridSize)
         ) {
             gameOver = true;
-            alert("Game Over!");
+            restartButton.style.display = "block"; // Pokaż przycisk "Restart"
             return;
         }
     }
 
-    // Kolizja z czarną ścianą (odbicie)
     if (head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize) {
         direction.x *= -1;
         direction.y *= -1;
@@ -84,7 +99,6 @@ function update() {
         head.y = snake[0].y + direction.y;
     }
 
-    // Kolizja z jedzeniem
     if (head.x === food.x && head.y === food.y) {
         score++;
         snake.unshift({ x: head.x, y: head.y });
@@ -98,7 +112,6 @@ function update() {
         snake.unshift(head);
     }
 
-    // Generowanie niebieskiego jedzenia
     if (!blueFood && Math.random() < 0.01) {
         blueFood = getRandomPosition();
         setTimeout(() => {
@@ -106,7 +119,6 @@ function update() {
         }, 10000);
     }
 
-    // Generowanie czerwonej ściany
     if (!redWall && Math.random() < 0.01) {
         const sides = ["top", "bottom", "left", "right"];
         redWall = { side: sides[Math.floor(Math.random() * sides.length)] };
@@ -114,33 +126,28 @@ function update() {
             redWall = null;
         }, 10000);
     }
+
+    scoreElement.textContent = `Wynik: ${score}`;
 }
 
 // Funkcja do rysowania gry
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Rysowanie węża
     drawSnake();
-
-    // Rysowanie jedzenia
     drawFood();
-
-    // Rysowanie czerwonej ściany
     drawRedWall();
-
-    // Rysowanie wyniku
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText(`Score: ${score}`, 10, 20);
 }
 
 // Główna pętla gry
 function gameLoop() {
+    if (gameOver) return; // Zatrzymaj grę, jeśli jest koniec
     update();
     draw();
-    if (!gameOver) setTimeout(gameLoop, 200);
+    setTimeout(gameLoop, 200);
 }
+
+// Obsługa przycisku "Restart"
+restartButton.addEventListener("click", resetGame);
 
 // Sterowanie
 document.addEventListener("keydown", (e) => {
