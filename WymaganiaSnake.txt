@@ -1,0 +1,40 @@
+Środowisko uruchomieniowe
+
+Przeglądarka obsługująca HTML5 i JavaScript (np. Chrome, Firefox, Edge, Safari).
+Plik HTML z osadzonym kodem JavaScript należy otworzyć w przeglądarce.
+Nie jest wymagany żaden dodatkowy serwer – wystarczy otworzyć plik lokalnie lub na dowolnym serwerze HTTP.
+Wymiary i podstawowe ustawienia
+
+Używany jest element <canvas> o wymiarach 400×400 pikseli.
+Każdy segment węża i każde pole (jedzenie) ma rozmiar 20×20 pikseli (stąd 20 pól w poziomie i 20 w pionie).
+Główna pętla gry odświeża ruch węża co 200 ms.
+Sterowanie
+
+Sterowanie wężem odbywa się przy pomocy strzałek: góra/dół/lewo/prawo.
+Celowe zawrócenie (o 180°) jest zablokowane – nie można natychmiast skierować się w stronę przeciwną.
+Ruch i kolizje
+
+Wąż porusza się w stałym tempie.
+Brak kolizji z ciałem węża (wąż może przechodzić przez swoje segmenty bez kończenia gry).
+Kolizja ze standardową (czarną) ścianą kończy się odbiciem węża (zmiana kierunku o 180°).
+Kolizja z czerwoną ścianą powoduje natychmiastowy koniec gry.
+Jedzenie
+
+Zielone jedzenie (pojawia się losowo raz przy starcie lub po zjedzeniu poprzedniego):
+Zjedzenie zielonego jedzenia zwiększa wynik o 1 punkt.
+Wąż rośnie o 1 segment (nie usuwamy ogona w danym „kroku”).
+Niebieskie jedzenie (pojawia się między 13 a 18 sekundami, pozostaje do 10 sekund):
+Jeśli wąż je zje, wynik spada o 1 punkt, a wąż traci 1 segment (o ile ma więcej niż jeden).
+Po 10 sekundach niebieski klocek znika samoczynnie (jeśli nie został wcześniej zjedzony).
+Po zniknięciu (lub zjedzeniu) niebieskiego klocka proces jest powtarzany (kolejne losowe pojawienie między 13 a 18 s).
+Czerwone ściany
+
+W losowym momencie nie częściej niż co 1–13 sekund jedna z krawędzi (góra, dół, lewo, prawo) zamienia się w czerwoną.
+Czerwona ściana pozostaje aktywna przez 10 sekund, po czym wraca do stanu czarnego.
+Wąż, uderzając w czerwoną ścianę, kończy grę (Game Over).
+Logika gry i punktacja
+
+Wynik początkowy to 0 i rośnie o 1 punkt po zjedzeniu zielonego jedzenia.
+Zjedzenie niebieskiego jedzenia obniża wynik o 1 punkt (do minimum 0).
+Koniec gry następuje po zderzeniu z czerwoną ścianą (lub ręcznej decyzji gracza o odświeżeniu strony).
+Po zakończeniu gry wyświetlany jest komunikat „Game Over!”.
